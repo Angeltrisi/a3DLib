@@ -1,0 +1,16 @@
+Items: {
+	Tomato: {
+		DisplayName: Tomato
+		Tooltip: ""
+	}
+
+	CubeItem: {
+		DisplayName: Cube Item
+		Tooltip: ""
+	}
+}
+
+Projectiles: {
+	TomatoProjectile.DisplayName: Tomato Projectile
+	CubeProjectile.DisplayName: Cube Projectile
+}

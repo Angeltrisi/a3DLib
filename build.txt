@@ -1,0 +1,3 @@
+displayName = 3DLib
+author = qAngel
+version = 0.1
