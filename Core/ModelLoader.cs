@@ -15,8 +15,6 @@ namespace a3DLib.Core
     // this is extremely fucked for the record but it works
     public class ModelLoader : ILoadable
     {
-        private static readonly string modelExtension = ".xnbfbx";
-        private readonly GraphicsDevice _graphicsDevice = Main.instance.GraphicsDevice;
         private static Func<ContentReader, object> readAsset;
         public static readonly Dictionary<string, Model> ModelRegistry = [];
         /// <summary>
@@ -30,7 +28,7 @@ namespace a3DLib.Core
         public static Model LoadModel(string pathNoExtension)
         {
             string modelName = Path.GetFileName(pathNoExtension);
-            string modName = pathNoExtension.Split([ '/', '\\' ], StringSplitOptions.RemoveEmptyEntries)[0];
+            string modName = pathNoExtension.Split(new char[] { '/', '\\' }, StringSplitOptions.RemoveEmptyEntries)[0];
             string fullModelName = $"{modName}:{modelName}";
             if (ModelRegistry.TryGetValue(fullModelName, out Model value))
                 return value;
@@ -40,7 +38,10 @@ namespace a3DLib.Core
             using MemoryStream stream = new(file);
             // this part is taken from Dom's WoTM!!!
             stream.Seek(10, SeekOrigin.Begin);
-            using ContentReader cr = new(Main.ShaderContentManager, stream, modelName, 0, 'w', null);
+            Type[] constructorParams = [typeof(ContentManager), typeof(Stream), typeof(string), typeof(int), typeof(char), typeof(Action<IDisposable>)];
+            ConstructorInfo constructor = typeof(ContentReader).GetConstructor(BindingFlags.Instance | BindingFlags.NonPublic, constructorParams);
+            object[] parameters = [Main.ShaderContentManager, stream, modelName, 0, 'w', null];
+            using ContentReader cr = (ContentReader)constructor.Invoke(parameters);
             Model asset = (Model)readAsset(cr);
             ModelRegistry[fullModelName] = asset;
 
@@ -56,6 +57,7 @@ namespace a3DLib.Core
             readAsset = null;
         }
     }
+    /*
     public static class AssetReaderCollectionUtils
     {
         public static void UnregisterReader(this AssetReaderCollection collection, IAssetReader reader, params string[] extensions)
@@ -69,4 +71,5 @@ namespace a3DLib.Core
             collection._extensions = [.. dict.Keys];
         }
     }
+    */
 }

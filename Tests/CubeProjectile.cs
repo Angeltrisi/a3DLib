@@ -2,12 +2,8 @@
 using a3DLib.Utilities;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
-using System;
-using System.Data;
-using System.IO;
 using Terraria;
 using Terraria.ModLoader;
-using Terraria.ModLoader.IO;
 
 namespace a3DLib.Tests
 {
@@ -72,7 +68,7 @@ namespace a3DLib.Tests
                     e.LightingEnabled = true;
                     e.Set3DLights(Projectile.Center, 8, 8);
                     e.AmbientLightColor = Lighting.GetColor(Projectile.Center.ToTileCoordinates()).ToVector3();
-                    e.textureEnabled = true;
+                    e.TextureEnabled = true;
                     e.Texture = cubeTex.Value;
                 });
             }

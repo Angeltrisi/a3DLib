@@ -33,7 +33,7 @@ namespace a3DLib.Tests
 
             CubeProjectile.testMesh.Draw(world, Matrix.Identity, projection, e =>
             {
-                e.textureEnabled = true;
+                e.TextureEnabled = true;
                 e.Texture = cubeTex.Value;
                 e.LightingEnabled = false;
             });

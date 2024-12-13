@@ -1,1 +1,2 @@
-Modify this file with a description of your mod.
+Provides a way for developers to use 3D models that have been compiled into .xnb, as well as many helper methods for the display of said 3D models.
+This mod must be strong-referenced by developers for proper usage, as it is a library mod.
