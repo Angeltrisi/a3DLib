@@ -1,6 +1,4 @@
-﻿using a3DLib.Core;
-using Microsoft.Xna.Framework.Graphics;
-using ReLogic.Content;
+﻿using Microsoft.Xna.Framework.Graphics;
 using System;
 
 namespace a3DLib.Utilities
@@ -8,11 +6,30 @@ namespace a3DLib.Utilities
     public static class Extensions
     {
         public static Vector3 ToVector3(this Vector2 v) => new(v.X, v.Y, 0);
-        public static void Draw(this Asset<LibMesh> m, Matrix world, Matrix view, Matrix projection, Action<BasicEffect> ChangeEffectParams = null)
+        /// <summary>
+        /// The regular drawing method for models doesn't work for whatever reason. Use this instead. Also, added flexibility through ChangeEffectParams.
+        /// </summary>
+        /// <param name="m"></param>
+        /// <param name="world"></param>
+        /// <param name="view"></param>
+        /// <param name="projection"></param>
+        /// <param name="ChangeEffectParams"></param>
+        /// <exception cref="InvalidOperationException"></exception>
+        public static void Draw(this Model m, Matrix world, Matrix view, Matrix projection, Action<BasicEffect> ChangeEffectParams = null)
         {
-            if (!m.IsLoaded)
-                return;
-            m.Value.Draw(world, view, projection, ChangeEffectParams);
+            foreach (ModelMesh mesh in m.Meshes)
+            {
+                foreach (Effect effect in mesh.Effects)
+                {
+                    IEffectMatrices obj = (effect as IEffectMatrices) ?? throw new InvalidOperationException();
+                    obj.World = world;
+                    obj.View = view;
+                    obj.Projection = projection;
+                    if (effect is BasicEffect be)
+                        ChangeEffectParams(be);
+                }
+                mesh.Draw();
+            }
         }
         /// <summary>
         /// Looks for the brightest and nearest 3 lights to the given world position, and applies them to this BasicEffect.

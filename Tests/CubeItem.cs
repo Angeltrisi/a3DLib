@@ -1,5 +1,6 @@
 ﻿using a3DLib.Utilities;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -24,11 +25,16 @@ namespace a3DLib.Tests
             Quaternion rightwardRotation = Quaternion.CreateFromAxisAngle(Vector3.Up, Main.GameUpdateCount / div);
             Quaternion targetRotation = Quaternion.Concatenate(upwardRotation, rightwardRotation);
 
-            Matrix world = MatrixCreation.World(scale * 10f, targetRotation, position, 10f);
+            Matrix world = MatrixCreation.World(scale, targetRotation, position, 10f);
             Matrix view = Matrix.Identity;
             Matrix projection = MatrixCreation.UIProjection(-30f, 10f);
+
+            Asset<Texture2D> cubeTex = ModContent.Request<Texture2D>("a3DLib/Tests/tomatoA_Texture");
+
             CubeProjectile.testMesh.Draw(world, Matrix.Identity, projection, e =>
             {
+                e.textureEnabled = true;
+                e.Texture = cubeTex.Value;
                 e.LightingEnabled = false;
             });
 

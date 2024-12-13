@@ -2,18 +2,26 @@
 using a3DLib.Utilities;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
+using System;
+using System.Data;
+using System.IO;
 using Terraria;
 using Terraria.ModLoader;
+using Terraria.ModLoader.IO;
 
 namespace a3DLib.Tests
 {
     public class CubeProjectile : ModProjectile
     {
         public override string Texture => a3DLib.BlankTexture;
-        public static LibMesh testMesh;
+        public static Model testMesh;
         public override void Load()
         {
-            testMesh = LibMesh.Load("a3DLib/Tests/tomatoA", true);
+            Main.QueueMainThreadAction(() =>
+            {
+                testMesh = ModelLoader.LoadModel("a3DLib/Tests/cube");
+                // Now we can use this model in two ways. Look at PreDraw for both of them (one of them is commented out).
+            });
         }
         public override void SetDefaults()
         {
@@ -29,25 +37,45 @@ namespace a3DLib.Tests
         }
         public override bool PreDraw(ref Color lightColor)
         {
-            Asset<Texture2D> drawTex = ModContent.Request<Texture2D>("a3DLib/Tests/tomato");
+            Asset<Texture2D> cubeTex = ModContent.Request<Texture2D>("a3DLib/Tests/tomatoA_Texture");
 
             float xRot = Projectile.Center.X * 0.01f;
             float yRot = 0f;
             float zRot = Projectile.rotation;
 
-            Matrix world = MatrixCreation.World(Projectile.scale * 15f, xRot, yRot, zRot, Projectile.Center, -35f);
+            Matrix world = MatrixCreation.World(Projectile.scale, xRot, yRot, zRot, Projectile.Center, -35f);
 
             Matrix view = MatrixCreation.CommonCameraView(-40f, 0f);
 
             Matrix projection = MatrixCreation.CommonOrthographicProjection(-40f, 20f);
 
-            testMesh.Draw(world, view, projection, e =>
+            // The first way we can reference and use the model is storing it in a static variable and using it this way.
+            // Make sure to check for null before running anything on it.
+            /*
+            testMesh?.Draw(world, view, projection, be =>
             {
-                e.AmbientLightColor = Lighting.GetColor(Projectile.Center.ToTileCoordinates()).ToVector3();
-                e.Set3DLights(Projectile.Center, 16, 16);
-                e.LightingEnabled = true;
-                e.TextureEnabled = true;
+                be.LightingEnabled = true;
+                be.Set3DLights(Projectile.Center, 8, 8);
+                be.AmbientLightColor = Lighting.GetColor(Projectile.Center.ToTileCoordinates()).ToVector3();
+                be.textureEnabled = true;
+                be.Texture = cubeTex.Value;
             });
+            */
+
+            // We can also use the model directly from the registry.
+            // Since our path is "a3DLib/Tests/cube", the name of this model in the registry will be our mod name, then "cube".
+
+            if (ModelLoader.ModelRegistry.TryGetValue("a3DLib:cube", out Model m))
+            {
+                m.Draw(world, view, projection, e =>
+                {
+                    e.LightingEnabled = true;
+                    e.Set3DLights(Projectile.Center, 8, 8);
+                    e.AmbientLightColor = Lighting.GetColor(Projectile.Center.ToTileCoordinates()).ToVector3();
+                    e.textureEnabled = true;
+                    e.Texture = cubeTex.Value;
+                });
+            }
 
             return false;
         }
