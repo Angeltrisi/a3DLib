@@ -7,6 +7,10 @@ using Terraria.ModLoader;
 
 namespace a3DLib.Tests
 {
+    /// <summary>
+    /// An example on display a model inside the game world.
+    /// Check <see cref="CubeItem"/> for a UI example.
+    /// </summary>
     public class CubeProjectile : ModProjectile
     {
         public override string Texture => a3DLib.BlankTexture;

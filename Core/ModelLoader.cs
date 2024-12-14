@@ -1,8 +1,6 @@
 ﻿using a3DLib.Tests;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using ReLogic.Content;
-using ReLogic.Content.Readers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -18,8 +16,9 @@ namespace a3DLib.Core
         private static Func<ContentReader, object> readAsset;
         public static readonly Dictionary<string, Model> ModelRegistry = [];
         /// <summary>
-        /// Loads a model that has been compiled into .xnb onto the registry.
-        /// If the provided model's name (the final part of the path) is already in the registry, it won't attempt to register it again.
+        /// <para>Loads a model that has been compiled into .xnb onto the registry.</para>
+        /// <para>Don't know how to compile into .xnb? One easy way is to use <see href="https://github.com/SuperAndyHero/EasyXnb/releases">EasyXnb</see>, though it only supports .fbx compilation. Another way is to compile your model using XNA (or any offshoot of XNA) using the Content Pipeline.</para>
+        /// <para>If the provided model's name (the final part of the path) is already in the registry, it won't attempt to register it again.</para>
         /// This method must be called using <see cref="Main.RunOnMainThread(Action)"/> or <see cref="Main.QueueMainThreadAction(Action)"/>, otherwise an error will be thrown.
         /// Check <see cref="CubeProjectile"/> for an example.
         /// </summary>
