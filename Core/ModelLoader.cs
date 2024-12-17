@@ -10,7 +10,6 @@ using Terraria.ModLoader;
 
 namespace a3DLib.Core
 {
-    // this is extremely fucked for the record but it works
     public class ModelLoader : ILoadable
     {
         private static Func<ContentReader, object> readAsset;
@@ -19,6 +18,7 @@ namespace a3DLib.Core
         /// <para>Loads a model that has been compiled into .xnb onto the registry.</para>
         /// <para>Don't know how to compile into .xnb? One easy way is to use <see href="https://github.com/SuperAndyHero/EasyXnb/releases">EasyXnb</see>, though it only supports .fbx compilation. Another way is to compile your model using XNA (or any offshoot of XNA) using the Content Pipeline.</para>
         /// <para>If the provided model's name (the final part of the path) is already in the registry, it won't attempt to register it again.</para>
+        /// <para>This method will automatically look for a texture with the given path + "_Texture", and use it. Check the Tests folder for an example.</para>
         /// This method must be called using <see cref="Main.RunOnMainThread(Action)"/> or <see cref="Main.QueueMainThreadAction(Action)"/>, otherwise an error will be thrown.
         /// Check <see cref="CubeProjectile"/> for an example.
         /// </summary>
@@ -40,8 +40,25 @@ namespace a3DLib.Core
             Type[] constructorParams = [typeof(ContentManager), typeof(Stream), typeof(string), typeof(int), typeof(char), typeof(Action<IDisposable>)];
             ConstructorInfo constructor = typeof(ContentReader).GetConstructor(BindingFlags.Instance | BindingFlags.NonPublic, constructorParams);
             object[] parameters = [Main.ShaderContentManager, stream, modelName, 0, 'w', null];
+
             using ContentReader cr = (ContentReader)constructor.Invoke(parameters);
             Model asset = (Model)readAsset(cr);
+
+            string texturePath = pathNoExtension + "_Texture";
+            Texture2D fetchedTexture = ModContent.HasAsset(texturePath) ? ModContent.Request<Texture2D>(texturePath, ReLogic.Content.AssetRequestMode.ImmediateLoad).Value : null;
+
+            foreach (ModelMesh mesh in asset.Meshes)
+            {
+                foreach (Effect effect in mesh.Effects)
+                {
+                    if (effect is BasicEffect be)
+                    {
+                        be.TextureEnabled = fetchedTexture != null;
+                        be.Texture = fetchedTexture;
+                    }
+                }
+            }
+
             ModelRegistry[fullModelName] = asset;
 
             return asset;

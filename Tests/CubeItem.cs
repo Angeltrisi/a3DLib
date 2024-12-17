@@ -8,7 +8,7 @@ using Terraria.ModLoader;
 namespace a3DLib.Tests
 {
     /// <summary>
-    /// An example on display a model inside UI.
+    /// An example on how to display a model inside UI.
     /// Check <see cref="CubeProjectile"/> for a world example.
     /// </summary>
     public class CubeItem : ModItem
@@ -40,12 +40,8 @@ namespace a3DLib.Tests
             Matrix view = Matrix.Identity;
             Matrix projection = MatrixCreation.UIProjection(-30f, 10f);
 
-            Asset<Texture2D> cubeTex = ModContent.Request<Texture2D>("a3DLib/Tests/tomatoA_Texture");
-
             CubeProjectile.testMesh.Draw(world, Matrix.Identity, projection, e =>
             {
-                e.TextureEnabled = true;
-                e.Texture = cubeTex.Value;
                 e.LightingEnabled = false;
             });
 

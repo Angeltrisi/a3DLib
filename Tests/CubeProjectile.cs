@@ -8,7 +8,7 @@ using Terraria.ModLoader;
 namespace a3DLib.Tests
 {
     /// <summary>
-    /// An example on display a model inside the game world.
+    /// An example on how to display a model inside the game world.
     /// Check <see cref="CubeItem"/> for a UI example.
     /// </summary>
     public class CubeProjectile : ModProjectile
@@ -37,7 +37,11 @@ namespace a3DLib.Tests
         }
         public override bool PreDraw(ref Color lightColor)
         {
-            Asset<Texture2D> cubeTex = ModContent.Request<Texture2D>("a3DLib/Tests/tomatoA_Texture");
+            // By default, the spriteBatch's RasterizerState is CullCounterClockwise, which prevents proper rendering in the world.
+            // TO-DO: Find a way around this.
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullClockwise, null, Main.GameViewMatrix.TransformationMatrix);
 
             float xRot = Projectile.Center.X * 0.01f;
             float yRot = 0f;
@@ -72,10 +76,11 @@ namespace a3DLib.Tests
                     e.LightingEnabled = true;
                     e.Set3DLights(Projectile.Center, 8, 8);
                     e.AmbientLightColor = Lighting.GetColor(Projectile.Center.ToTileCoordinates()).ToVector3();
-                    e.TextureEnabled = true;
-                    e.Texture = cubeTex.Value;
                 });
             }
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearWrap, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
 
             return false;
         }
