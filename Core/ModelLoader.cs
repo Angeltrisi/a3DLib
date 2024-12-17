@@ -26,6 +26,8 @@ namespace a3DLib.Core
         /// <returns></returns>
         public static Model LoadModel(string pathNoExtension)
         {
+            if (Main.dedServ)
+                return null;
             string modelName = Path.GetFileName(pathNoExtension);
             string modName = pathNoExtension.Split(new char[] { '/', '\\' }, StringSplitOptions.RemoveEmptyEntries)[0];
             string fullModelName = $"{modName}:{modelName}";
