@@ -17,6 +17,7 @@ namespace a3DLib.Core
         /// <summary>
         /// <para>Loads a model that has been compiled into .xnb onto the registry.</para>
         /// <para>Don't know how to compile into .xnb? One easy way is to use <see href="https://github.com/SuperAndyHero/EasyXnb/releases">EasyXnb</see>, though it only supports .fbx compilation. Another way is to compile your model using XNA (or any offshoot of XNA) using the Content Pipeline.</para>
+        /// <para>After testing various models, I found that the ones most likely to compile correctly are models without embedded textures or materials, so you might find more success making models yourself rather than finding them online, though it really depends on the model.</para>
         /// <para>If the provided model's name (the final part of the path) is already in the registry, it won't attempt to register it again.</para>
         /// <para>This method will automatically look for a texture with the given path + "_Texture", and use it. Check the Tests folder for an example.</para>
         /// This method must be called using <see cref="Main.RunOnMainThread(Action)"/> or <see cref="Main.QueueMainThreadAction(Action)"/>, otherwise an error will be thrown.
