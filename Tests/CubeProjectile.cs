@@ -61,8 +61,6 @@ namespace a3DLib.Tests
                 be.LightingEnabled = true;
                 be.Set3DLights(Projectile.Center, 8, 8);
                 be.AmbientLightColor = Lighting.GetColor(Projectile.Center.ToTileCoordinates()).ToVector3();
-                be.textureEnabled = true;
-                be.Texture = cubeTex.Value;
             });
             */
 
@@ -71,6 +69,15 @@ namespace a3DLib.Tests
 
             if (ModelLoader.ModelRegistry.TryGetValue("a3DLib:cube", out Model m))
             {
+                // If you're having trouble using the native Model.Draw() implementation, you might need to scale the world matrix by some factor like I do here:
+
+                /*
+                Matrix rescaled = Matrix.CreateScale(0.01f);
+                m.Draw(rescaled * world, view, projection);
+                */
+                
+                // My implementation should work just fine in most places.
+
                 m.Draw(world, view, projection, e =>
                 {
                     e.LightingEnabled = true;

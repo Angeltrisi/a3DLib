@@ -8,9 +8,10 @@ namespace a3DLib.Utilities
     {
         public static Vector3 ToVector3(this Vector2 v) => new(v.X, v.Y, 0);
         /// <summary>
-        /// The regular drawing method for models doesn't work for whatever reason. Use this instead. Also, added flexibility through ChangeEffectParams.
+        /// <para>This is a simplified version of the native <see cref="Model.Draw(Matrix, Matrix, Matrix)"/>, though you can use either (with some changes, check <see cref="CubeProjectile"/>'s comments.</para>
+        /// Also, added flexibility through ChangeEffectParams.
         /// Don't know what to use for the matrices? Check the <see cref="MatrixCreation"/> class for some helpers designed for use with Terraria.
-        /// You may also check the usage examples such as <see cref="CubeItem"/> for UI usage, and <see cref="CubeProjectile"/>
+        /// You may also check the usage examples such as <see cref="CubeItem"/> for UI usage, and <see cref="CubeProjectile"/> for world usage.
         /// </summary>
         /// <param name="m"></param>
         /// <param name="world"></param>
