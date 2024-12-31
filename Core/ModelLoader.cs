@@ -68,11 +68,14 @@ namespace a3DLib.Core
         {
             [UnsafeAccessor(UnsafeAccessorKind.Constructor)]
             public static extern ContentReader NewContentReader(ContentManager contentManager, Stream stream, string modelName, int version, char platform, Action<IDisposable> recordDisposableObject);
+            /* this will work when tml is ported to .NET 9
+            [UnsafeAccessor(UnsafeAccessorKind.Method)]
+            public static extern object CallReadAsset<T>(ContentReader reader);
+            */
         }
         void ILoadable.Load(Mod mod)
         {
-            // hm, i couldn't quite figure out how to switch this to unsafeaccessor.
-            // TODO: switch this to unsafeaccessor
+            // TODO: switch this to unsafeaccessor (when tml is ported to .NET 9)
             var readAssetMethod = typeof(ContentReader).GetMethod("ReadAsset", BindingFlags.NonPublic | BindingFlags.Instance)!.MakeGenericMethod(typeof(object));
             readAsset = (Func<ContentReader, object>)Delegate.CreateDelegate(typeof(Func<ContentReader, object>), readAssetMethod);
         }
