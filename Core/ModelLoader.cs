@@ -7,6 +7,7 @@ using System.IO;
 using System.Reflection;
 using Terraria;
 using Terraria.ModLoader;
+using System.Runtime.CompilerServices;
 
 namespace a3DLib.Core
 {
@@ -40,11 +41,8 @@ namespace a3DLib.Core
             using MemoryStream stream = new(file);
             // this part is taken from Dom's WoTM!!!
             stream.Seek(10, SeekOrigin.Begin);
-            Type[] constructorParams = [typeof(ContentManager), typeof(Stream), typeof(string), typeof(int), typeof(char), typeof(Action<IDisposable>)];
-            ConstructorInfo constructor = typeof(ContentReader).GetConstructor(BindingFlags.Instance | BindingFlags.NonPublic, constructorParams);
-            object[] parameters = [Main.ShaderContentManager, stream, modelName, 0, 'w', null];
 
-            using ContentReader cr = (ContentReader)constructor.Invoke(parameters);
+            using ContentReader cr = Accessors.NewContentReader(Main.ShaderContentManager, stream, modelName, 0, 'w', null);
             Model asset = (Model)readAsset(cr);
 
             string texturePath = pathNoExtension + "_Texture";
@@ -66,8 +64,15 @@ namespace a3DLib.Core
 
             return asset;
         }
+        private static class Accessors
+        {
+            [UnsafeAccessor(UnsafeAccessorKind.Constructor)]
+            public static extern ContentReader NewContentReader(ContentManager contentManager, Stream stream, string modelName, int version, char platform, Action<IDisposable> recordDisposableObject);
+        }
         void ILoadable.Load(Mod mod)
         {
+            // hm, i couldn't quite figure out how to switch this to unsafeaccessor.
+            // TODO: switch this to unsafeaccessor
             var readAssetMethod = typeof(ContentReader).GetMethod("ReadAsset", BindingFlags.NonPublic | BindingFlags.Instance)!.MakeGenericMethod(typeof(object));
             readAsset = (Func<ContentReader, object>)Delegate.CreateDelegate(typeof(Func<ContentReader, object>), readAssetMethod);
         }
